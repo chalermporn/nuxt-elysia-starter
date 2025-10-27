@@ -1,4 +1,4 @@
-import { count, like, or } from 'drizzle-orm'
+import { asc, count, desc, like, or } from 'drizzle-orm'
 import { Elysia } from 'elysia'
 import { db } from './server/db'
 import { members } from './server/db/schema'
@@ -9,6 +9,8 @@ export default () => new Elysia()
     const page = Number.parseInt(query.page as string) || 1
     const limit = Number.parseInt(query.limit as string) || 10
     const search = (query.search as string) || ''
+    const sortBy = (query.sortBy as string) || 'id'
+    const sortOrder = (query.sortOrder as string) || 'asc'
 
     // Build where clause for search
     const whereClause = search
@@ -19,6 +21,10 @@ export default () => new Elysia()
           like(members.city, `%${search}%`),
         )
       : undefined
+
+    // Build order by clause
+    const orderByColumn = members[sortBy as keyof typeof members] || members.id
+    const orderByClause = sortOrder === 'desc' ? desc(orderByColumn) : asc(orderByColumn)
 
     // Get total count
     const totalResult = await db
@@ -35,6 +41,7 @@ export default () => new Elysia()
       .select()
       .from(members)
       .where(whereClause)
+      .orderBy(orderByClause)
       .limit(limit)
       .offset(offset)
 

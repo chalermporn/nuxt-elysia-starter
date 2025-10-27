@@ -27,6 +27,9 @@ const { $api } = useNuxtApp()
 
 const currentPage = ref(1)
 const searchQuery = ref('')
+const itemsPerPage = ref(10)
+const sortBy = ref<keyof Member | ''>('')
+const sortOrder = ref<'asc' | 'desc'>('asc')
 const members = ref<Member[]>([])
 const isLoading = ref(false)
 const pagination = ref({
@@ -42,12 +45,19 @@ async function fetchMembers() {
   isLoading.value = true
 
   try {
+    const queryParams: any = {
+      page: currentPage.value.toString(),
+      limit: itemsPerPage.value.toString(),
+      search: searchQuery.value,
+    }
+
+    if (sortBy.value) {
+      queryParams.sortBy = sortBy.value
+      queryParams.sortOrder = sortOrder.value
+    }
+
     const { data, error } = await $api.members.get({
-      query: {
-        page: currentPage.value.toString(),
-        limit: '10',
-        search: searchQuery.value,
-      },
+      query: queryParams,
     })
 
     if (error) {
@@ -88,6 +98,25 @@ function handleSearch() {
   fetchMembers()
 }
 
+function handleSort(column: keyof Member) {
+  if (sortBy.value === column) {
+    // Toggle sort order if same column
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc'
+  }
+  else {
+    // Set new column with ascending order
+    sortBy.value = column
+    sortOrder.value = 'asc'
+  }
+  currentPage.value = 1
+  fetchMembers()
+}
+
+function handleItemsPerPageChange() {
+  currentPage.value = 1
+  fetchMembers()
+}
+
 // Initial fetch
 onMounted(() => {
   fetchMembers()
@@ -124,9 +153,32 @@ onMounted(() => {
       </button>
     </div>
 
-    <!-- Summary -->
-    <div class="mb-4 text-sm opacity-70">
-      แสดง {{ (pagination.page - 1) * pagination.limit + 1 }} - {{ Math.min(pagination.page * pagination.limit, pagination.total) }} จาก {{ pagination.total }} รายการ
+    <!-- Summary and Items Per Page -->
+    <div class="mb-4 flex items-center justify-between">
+      <div class="text-sm opacity-70">
+        แสดง {{ (pagination.page - 1) * pagination.limit + 1 }} - {{ Math.min(pagination.page * pagination.limit, pagination.total) }} จาก {{ pagination.total }} รายการ
+      </div>
+      <div class="flex items-center gap-2">
+        <label class="text-sm opacity-70">แสดงผลต่อหน้า:</label>
+        <select
+          v-model="itemsPerPage"
+          class="select select-bordered select-sm w-20"
+          @change="handleItemsPerPageChange"
+        >
+          <option :value="10">
+            10
+          </option>
+          <option :value="25">
+            25
+          </option>
+          <option :value="50">
+            50
+          </option>
+          <option :value="100">
+            100
+          </option>
+        </select>
+      </div>
     </div>
 
     <!-- Table -->
@@ -134,32 +186,77 @@ onMounted(() => {
       <table class="table table-zebra table-pin-rows table-pin-cols whitespace-nowrap">
         <thead>
           <tr>
-            <th class="w-16">
-              ID
+            <th class="w-16 cursor-pointer hover:bg-base-200" @click="handleSort('id')">
+              <div class="flex items-center gap-1">
+                ID
+                <span v-if="sortBy === 'id'" class="text-xs">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
             </th>
-            <td class="min-w-32">
-              ชื่อ
+            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('firstName')">
+              <div class="flex items-center gap-1">
+                ชื่อ
+                <span v-if="sortBy === 'firstName'" class="text-xs">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
             </td>
-            <td class="min-w-32">
-              นามสกุล
+            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('lastName')">
+              <div class="flex items-center gap-1">
+                นามสกุล
+                <span v-if="sortBy === 'lastName'" class="text-xs">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
             </td>
-            <td class="min-w-48">
-              อีเมล
+            <td class="min-w-48 cursor-pointer hover:bg-base-200" @click="handleSort('email')">
+              <div class="flex items-center gap-1">
+                อีเมล
+                <span v-if="sortBy === 'email'" class="text-xs">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
             </td>
-            <td class="min-w-32">
-              เบอร์โทร
+            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('phone')">
+              <div class="flex items-center gap-1">
+                เบอร์โทร
+                <span v-if="sortBy === 'phone'" class="text-xs">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
             </td>
-            <td class="w-20">
-              อายุ
+            <td class="w-20 cursor-pointer hover:bg-base-200" @click="handleSort('age')">
+              <div class="flex items-center gap-1">
+                อายุ
+                <span v-if="sortBy === 'age'" class="text-xs">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
             </td>
-            <td class="min-w-32">
-              เมือง
+            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('city')">
+              <div class="flex items-center gap-1">
+                เมือง
+                <span v-if="sortBy === 'city'" class="text-xs">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
             </td>
-            <td class="w-24">
-              สถานะ
+            <td class="w-24 cursor-pointer hover:bg-base-200" @click="handleSort('status')">
+              <div class="flex items-center gap-1">
+                สถานะ
+                <span v-if="sortBy === 'status'" class="text-xs">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
             </td>
-            <td class="min-w-32">
-              วันที่สมัคร
+            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('joinDate')">
+              <div class="flex items-center gap-1">
+                วันที่สมัคร
+                <span v-if="sortBy === 'joinDate'" class="text-xs">
+                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
+                </span>
+              </div>
             </td>
           </tr>
         </thead>
