@@ -95,29 +95,29 @@ onMounted(() => {
 </script>
 
 <template>
-  <div style="max-width: 1400px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
-    <h1 style="color: #333; margin-bottom: 20px;">
+  <div class="max-w-7xl mx-auto p-5 font-sans">
+    <h1 class="text-gray-800 mb-5 text-3xl font-bold">
       รายชื่อสมาชิก
     </h1>
 
     <!-- Search Bar -->
-    <div style="margin-bottom: 20px;">
+    <div class="mb-5">
       <input
         v-model="searchQuery"
         type="text"
         placeholder="ค้นหาสมาชิก (ชื่อ, อีเมล, เมือง)..."
-        style="padding: 10px; width: 300px; border: 1px solid #ddd; border-radius: 4px;"
+        class="p-2.5 w-80 border border-gray-300 rounded"
         @keyup.enter="handleSearch"
       >
       <button
-        style="padding: 10px 20px; margin-left: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 4px; cursor: pointer;"
+        class="py-2.5 px-5 ml-2.5 bg-green-600 text-white border-none rounded cursor-pointer hover:bg-green-700"
         @click="handleSearch"
       >
         ค้นหา
       </button>
       <button
         v-if="searchQuery"
-        style="padding: 10px 20px; margin-left: 10px; background-color: #888; color: white; border: none; border-radius: 4px; cursor: pointer;"
+        class="py-2.5 px-5 ml-2.5 bg-gray-600 text-white border-none rounded cursor-pointer hover:bg-gray-700"
         @click="searchQuery = ''; handleSearch()"
       >
         ล้างการค้นหา
@@ -125,40 +125,40 @@ onMounted(() => {
     </div>
 
     <!-- Summary -->
-    <div style="margin-bottom: 15px; color: #666;">
+    <div class="mb-4 text-gray-600">
       แสดง {{ (pagination.page - 1) * pagination.limit + 1 }} - {{ Math.min(pagination.page * pagination.limit, pagination.total) }} จาก {{ pagination.total }} รายการ
     </div>
 
     <!-- Table -->
-    <div style="overflow-x: auto; border: 1px solid #ddd; border-radius: 8px;">
-      <table style="width: 100%; border-collapse: collapse; background: white;">
+    <div class="overflow-x-auto border border-gray-300 rounded-lg">
+      <table class="w-full border-collapse bg-white">
         <thead>
-          <tr style="background-color: #f5f5f5;">
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">
+          <tr class="bg-gray-100">
+            <th class="p-3 text-left border-b-2 border-gray-300">
               ID
             </th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">
+            <th class="p-3 text-left border-b-2 border-gray-300">
               ชื่อ
             </th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">
+            <th class="p-3 text-left border-b-2 border-gray-300">
               นามสกุล
             </th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">
+            <th class="p-3 text-left border-b-2 border-gray-300">
               อีเมล
             </th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">
+            <th class="p-3 text-left border-b-2 border-gray-300">
               เบอร์โทร
             </th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">
+            <th class="p-3 text-left border-b-2 border-gray-300">
               อายุ
             </th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">
+            <th class="p-3 text-left border-b-2 border-gray-300">
               เมือง
             </th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">
+            <th class="p-3 text-left border-b-2 border-gray-300">
               สถานะ
             </th>
-            <th style="padding: 12px; text-align: left; border-bottom: 2px solid #ddd;">
+            <th class="p-3 text-left border-b-2 border-gray-300">
               วันที่สมัคร
             </th>
           </tr>
@@ -169,20 +169,19 @@ onMounted(() => {
             <tr
               v-for="i in 10"
               :key="`skeleton-${i}`"
-              style="border-bottom: 1px solid #eee;"
+              class="border-b border-gray-200"
             >
               <td
                 v-for="col in 9"
                 :key="`skeleton-${i}-${col}`"
-                style="padding: 12px;"
+                class="p-3"
               >
                 <div
-                  class="skeleton"
-                  :style="{
-                    height: '22px',
-                    backgroundColor: '#e0e0e0',
-                    borderRadius: '4px',
-                    width: col === 4 ? '200px' : col === 1 ? '40px' : '100px',
+                  class="skeleton h-5.5 bg-gray-300 rounded"
+                  :class="{
+                    'w-10': col === 1,
+                    'w-50': col === 4,
+                    'w-25': col !== 1 && col !== 4,
                   }"
                 />
               </td>
@@ -194,44 +193,38 @@ onMounted(() => {
             <tr
               v-for="member in members"
               :key="member.id"
-              style="border-bottom: 1px solid #eee;"
+              class="border-b border-gray-200 hover:bg-gray-50"
             >
-              <td style="padding: 12px;">
+              <td class="p-3">
                 {{ member.id }}
               </td>
-              <td style="padding: 12px;">
+              <td class="p-3">
                 {{ member.firstName }}
               </td>
-              <td style="padding: 12px;">
+              <td class="p-3">
                 {{ member.lastName }}
               </td>
-              <td style="padding: 12px;">
+              <td class="p-3">
                 {{ member.email }}
               </td>
-              <td style="padding: 12px;">
+              <td class="p-3">
                 {{ member.phone }}
               </td>
-              <td style="padding: 12px;">
+              <td class="p-3">
                 {{ member.age }}
               </td>
-              <td style="padding: 12px;">
+              <td class="p-3">
                 {{ member.city }}
               </td>
-              <td style="padding: 12px;">
+              <td class="p-3">
                 <span
-                  :style="{
-                    padding: '4px 12px',
-                    borderRadius: '12px',
-                    fontSize: '12px',
-                    fontWeight: 'bold',
-                    backgroundColor: member.status === 'active' ? '#4CAF50' : '#f44336',
-                    color: 'white',
-                  }"
+                  class="py-1 px-3 rounded-xl text-xs font-bold text-white"
+                  :class="member.status === 'active' ? 'bg-green-600' : 'bg-red-600'"
                 >
                   {{ member.status === 'active' ? 'ใช้งาน' : 'ไม่ใช้งาน' }}
                 </span>
               </td>
-              <td style="padding: 12px;">
+              <td class="p-3">
                 {{ member.joinDate }}
               </td>
             </tr>
@@ -241,29 +234,21 @@ onMounted(() => {
     </div>
 
     <!-- Pagination -->
-    <div style="margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+    <div class="mt-5 flex justify-center items-center gap-2.5">
       <button
         :disabled="!pagination.hasPrev"
-        style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 4px; background-color: white; cursor: pointer;"
-        :style="{ opacity: pagination.hasPrev ? 1 : 0.5, cursor: pagination.hasPrev ? 'pointer' : 'not-allowed' }"
+        class="py-2 px-4 border border-gray-300 rounded bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
         @click="prevPage"
       >
         ก่อนหน้า
       </button>
 
-      <div style="display: flex; gap: 5px;">
+      <div class="flex gap-1.5">
         <button
           v-for="page in pagination.totalPages"
           :key="page"
-          :style="{
-            padding: '8px 12px',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
-            backgroundColor: currentPage === page ? '#4CAF50' : 'white',
-            color: currentPage === page ? 'white' : '#333',
-            cursor: 'pointer',
-            fontWeight: currentPage === page ? 'bold' : 'normal',
-          }"
+          class="py-2 px-3 border border-gray-300 rounded cursor-pointer transition-colors"
+          :class="currentPage === page ? 'bg-green-600 text-white font-bold' : 'bg-white text-gray-800 hover:bg-gray-50'"
           @click="goToPage(page)"
         >
           {{ page }}
@@ -272,15 +257,14 @@ onMounted(() => {
 
       <button
         :disabled="!pagination.hasNext"
-        style="padding: 8px 16px; border: 1px solid #ddd; border-radius: 4px; background-color: white; cursor: pointer;"
-        :style="{ opacity: pagination.hasNext ? 1 : 0.5, cursor: pagination.hasNext ? 'pointer' : 'not-allowed' }"
+        class="py-2 px-4 border border-gray-300 rounded bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
         @click="nextPage"
       >
         ถัดไป
       </button>
     </div>
 
-    <div style="margin-top: 10px; text-align: center; color: #666;">
+    <div class="mt-2.5 text-center text-gray-600">
       หน้า {{ pagination.page }} จาก {{ pagination.totalPages }}
     </div>
   </div>

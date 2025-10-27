@@ -1,3 +1,4 @@
+import tailwindcss from '@tailwindcss/vite'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -14,16 +15,17 @@ export default defineNuxtConfig({
   devServer: {
     port: 3000,
   },
-
+  css: ['~/assets/css/main.css'],
   vite: {
+    plugins: [
+      tailwindcss(),
+    ],
     build: {
       sourcemap: false,
     },
   },
-  modules: [
-    '@nuxt/eslint',
-    'nuxt-elysia',
-  ],
+  modules: ['@nuxt/eslint', 'nuxt-elysia'],
+
   runtimeConfig: {
     'nuxt-elysia': {
       path: '/api',
