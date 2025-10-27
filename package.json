@@ -11,6 +11,7 @@
     "postinstall": "nuxt prepare",
     "lint": "eslint *.config.{ts,mjs} app/",
     "lint:fix": "eslint *.config.{ts,mjs} app/ --fix",
+    "db": "bun run db:push && bun run db:seed",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
