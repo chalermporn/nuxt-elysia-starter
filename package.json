@@ -3,7 +3,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nuxt build",
+    "build": "nuxt build && bun run postbuild",
+    "postbuild": "cp sqlite.db .output/sqlite.db 2>/dev/null || true",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
