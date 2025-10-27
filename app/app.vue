@@ -179,7 +179,7 @@ onMounted(() => {
                 <div
                   class="skeleton"
                   :style="{
-                    height: '16px',
+                    height: '22px',
                     backgroundColor: '#e0e0e0',
                     borderRadius: '4px',
                     width: col === 4 ? '200px' : col === 1 ? '40px' : '100px',
