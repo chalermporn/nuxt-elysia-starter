@@ -2,13 +2,25 @@ import { beforeAll, describe, expect, it, vi } from 'vitest'
 
 // Mock the database dependencies
 vi.mock('./server/db/index.ts', () => {
+  let isCountQuery = false
+
   const mockDb = {
-    select: vi.fn(() => mockDb),
+    select: vi.fn((fields?: any) => {
+      // Check if this is a count query
+      isCountQuery = fields && fields.count
+      return mockDb
+    }),
     from: vi.fn(() => mockDb),
     where: vi.fn(() => mockDb),
     orderBy: vi.fn(() => mockDb),
     limit: vi.fn(() => mockDb),
-    offset: vi.fn(() => Promise.resolve([{ count: 0 }])),
+    offset: vi.fn(() => {
+      if (isCountQuery) {
+        return Promise.resolve([{ count: 0 }])
+      }
+      // Return empty array for member data when count is 0
+      return Promise.resolve([])
+    }),
   }
   return { db: mockDb }
 })
@@ -58,12 +70,13 @@ describe('API Tests', () => {
     const data = await response.json()
     expect(data).toHaveProperty('data')
     expect(data).toHaveProperty('pagination')
+    expect(Array.isArray(data.data)).toBe(true)
   })
 
   it('should accept query parameters for /members', async () => {
     const app = api()
     const response = await app.handle(
-      new Request('http://localhost/members?page=2&limit=5&search=test&sortBy=name&sortOrder=desc'),
+      new Request('http://localhost/members?page=2&limit=5&search=test&sortBy=firstName&sortOrder=desc'),
     )
 
     expect(response.status).toBe(200)
