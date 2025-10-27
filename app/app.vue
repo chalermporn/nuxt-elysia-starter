@@ -131,25 +131,43 @@ onMounted(() => {
 
     <!-- Table -->
     <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
-      <table class="table table-zebra table-pin-rows table-pin-cols">
+      <table class="table table-zebra table-pin-rows table-pin-cols whitespace-nowrap">
         <thead>
           <tr>
-            <th>ID</th>
-            <td>ชื่อ</td>
-            <td>นามสกุล</td>
-            <td>อีเมล</td>
-            <td>เบอร์โทร</td>
-            <td>อายุ</td>
-            <td>เมือง</td>
-            <td>สถานะ</td>
-            <td>วันที่สมัคร</td>
+            <th class="w-16">
+              ID
+            </th>
+            <td class="min-w-32">
+              ชื่อ
+            </td>
+            <td class="min-w-32">
+              นามสกุล
+            </td>
+            <td class="min-w-48">
+              อีเมล
+            </td>
+            <td class="min-w-32">
+              เบอร์โทร
+            </td>
+            <td class="w-20">
+              อายุ
+            </td>
+            <td class="min-w-32">
+              เมือง
+            </td>
+            <td class="w-24">
+              สถานะ
+            </td>
+            <td class="min-w-32">
+              วันที่สมัคร
+            </td>
           </tr>
         </thead>
         <tbody>
           <!-- Skeleton Loading -->
           <template v-if="isLoading">
             <tr v-for="i in 10" :key="`skeleton-${i}`">
-              <td v-for="col in 9" :key="`skeleton-${i}-${col}`">
+              <td v-for="col in 9" :key="`skeleton-${i}-${col}`" class="whitespace-nowrap">
                 <div class="skeleton h-4 w-20" />
               </td>
             </tr>
@@ -162,14 +180,28 @@ onMounted(() => {
               :key="member.id"
               class="hover"
             >
-              <th>{{ member.id }}</th>
-              <td>{{ member.firstName }}</td>
-              <td>{{ member.lastName }}</td>
-              <td>{{ member.email }}</td>
-              <td>{{ member.phone }}</td>
-              <td>{{ member.age }}</td>
-              <td>{{ member.city }}</td>
-              <td>
+              <th class="whitespace-nowrap">
+                {{ member.id }}
+              </th>
+              <td class="whitespace-nowrap">
+                {{ member.firstName }}
+              </td>
+              <td class="whitespace-nowrap">
+                {{ member.lastName }}
+              </td>
+              <td class="whitespace-nowrap">
+                {{ member.email }}
+              </td>
+              <td class="whitespace-nowrap">
+                {{ member.phone }}
+              </td>
+              <td class="whitespace-nowrap">
+                {{ member.age }}
+              </td>
+              <td class="whitespace-nowrap">
+                {{ member.city }}
+              </td>
+              <td class="whitespace-nowrap">
                 <span
                   class="badge"
                   :class="member.status === 'active' ? 'badge-success' : 'badge-error'"
@@ -177,7 +209,13 @@ onMounted(() => {
                   {{ member.status === 'active' ? 'ใช้งาน' : 'ไม่ใช้งาน' }}
                 </span>
               </td>
-              <td>{{ member.joinDate }}</td>
+              <td class="whitespace-nowrap">
+                {{ new Date(member.joinDate).toLocaleDateString('th-TH', {
+                  day: 'numeric',
+                  month: 'short',
+                  year: 'numeric',
+                }) }}
+              </td>
             </tr>
           </template>
         </tbody>
