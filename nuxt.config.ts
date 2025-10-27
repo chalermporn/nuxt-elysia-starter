@@ -5,4 +5,18 @@ export default defineNuxtConfig({
   nitro: {
     preset: 'bun',
   },
+  // Development server configuration
+  devServer: {
+    port: 3000,
+  },
+
+  vite: {
+    build: {
+      sourcemap: false,
+    },
+  },
+  modules: [
+    '@nuxt/eslint',
+  ],
+
 })
