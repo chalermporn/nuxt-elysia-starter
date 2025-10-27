@@ -21,9 +21,7 @@ export default defineNuxtConfig({
           content: 'A modern member management system built with Nuxt 4, Elysia, and TailwindCSS. Features include sorting, pagination, and search functionality.',
         },
       ],
-      link: [
-        { rel: 'dns-prefetch', href: 'http://localhost:3000' },
-      ],
+
     },
   },
 
