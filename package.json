@@ -9,11 +9,17 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "lint": "eslint *.config.{ts,mjs} app/",
-    "lint:fix": "eslint *.config.{ts,mjs} app/ --fix"
+    "lint:fix": "eslint *.config.{ts,mjs} app/ --fix",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "bun run server/db/seed.ts"
   },
   "dependencies": {
     "@elysiajs/eden": "^1.4.4",
     "@nuxt/eslint": "^1.9.0",
+    "drizzle-orm": "^0.44.7",
     "elysia": "^1.4.13",
     "nuxt": "^4.2.0",
     "vue": "^3.5.22",
@@ -21,6 +27,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "^6.1.0",
+    "@types/bun": "^1.3.1",
+    "drizzle-kit": "^0.31.5",
     "eslint": "^9.38.0",
     "eslint-plugin-format": "^1.0.2",
     "nuxt-elysia": "^0.2.0"
