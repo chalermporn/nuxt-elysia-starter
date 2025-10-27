@@ -20,7 +20,6 @@
   "dependencies": {
     "@elysiajs/eden": "^1.4.4",
     "@nuxt/eslint": "^1.9.0",
-    "@nuxtjs/tailwindcss": "^6.14.0",
     "@tailwindcss/vite": "^4.1.16",
     "drizzle-orm": "^0.44.7",
     "elysia": "^1.4.13",
