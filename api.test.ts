@@ -85,4 +85,41 @@ describe('API Tests', () => {
     expect(data.pagination.page).toBe(2)
     expect(data.pagination.limit).toBe(5)
   })
+
+  it('should handle invalid sortBy parameter and fallback to id', async () => {
+    const app = api()
+    const response = await app.handle(
+      new Request('http://localhost/members?sortBy=invalidField&sortOrder=asc'),
+    )
+
+    expect(response.status).toBe(200)
+    const data = await response.json()
+    expect(data).toHaveProperty('data')
+    expect(data).toHaveProperty('pagination')
+  })
+
+  it('should handle asc sort order', async () => {
+    const app = api()
+    const response = await app.handle(
+      new Request('http://localhost/members?sortBy=age&sortOrder=asc'),
+    )
+
+    expect(response.status).toBe(200)
+    const data = await response.json()
+    expect(data).toHaveProperty('data')
+    expect(data).toHaveProperty('pagination')
+  })
+
+  it('should handle search with no query parameters', async () => {
+    const app = api()
+    const response = await app.handle(
+      new Request('http://localhost/members'),
+    )
+
+    expect(response.status).toBe(200)
+    const data = await response.json()
+    expect(data).toHaveProperty('data')
+    expect(data.pagination.page).toBe(1)
+    expect(data.pagination.limit).toBe(10)
+  })
 })
