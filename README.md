@@ -1,6 +1,31 @@
-# Nuxt Minimal Starter
+# Nuxt Elysia Starter
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A modern full-stack starter template combining [Nuxt 4](https://nuxt.com) for the frontend and [Elysia](https://elysiajs.com) for the backend API. This template provides a solid foundation for building type-safe, high-performance web applications.
+
+## Tech Stack
+
+- 🚀 [Nuxt](https://nuxt.com) v4.2.0
+- ⚡️ [Elysia](https://elysiajs.com) v1.4.13
+- 🗃️ [Drizzle ORM](https://orm.drizzle.team) v0.44.7
+- 🎨 [TailwindCSS](https://tailwindcss.com) v4.1.16 with [DaisyUI](https://daisyui.com) v5.3.10
+- 🔧 [ESLint](https://eslint.org) v9.38.0 for code quality
+- ⚛️ [Vue](https://vuejs.org) v3.5.22
+
+## Features
+
+- 🚀 [Nuxt 4](https://nuxt.com) - The Intuitive Web Framework
+- ⚡️ [Elysia](https://elysiajs.com) - TypeScript HTTP Framework for Bun
+- 🗃️ [Drizzle ORM](https://orm.drizzle.team) - TypeScript ORM
+- 🔒 Type-safe database operations
+- 📝 Automatic API route generation
+- 🎨 TailwindCSS for styling
+- ⚙️ ESLint + TypeScript for code quality
+
+## Prerequisites
+
+- [Bun](https://bun.sh) >= 1.0.0
+- Node.js >= 18.x
+- Database (PostgreSQL recommended)
 
 ## Setup
 
@@ -37,6 +62,39 @@ yarn dev
 # bun
 bun run dev
 ```
+
+## Database Management
+
+### Migrations
+
+To generate and run database migrations with Drizzle:
+
+```bash
+# Generate migrations
+bun run db:generate
+
+# Push migrations to database
+bun run db:push
+
+# Run database seed
+bun run db:seed
+
+# Start Drizzle Studio (Database GUI)
+bun run db:studio
+
+# Setup database (push + seed)
+bun run db
+```
+
+The migration files will be stored in `server/db/migrations/`.
+
+### Database Schema
+
+The database schema is defined in `server/db/schema.ts`. After making changes to the schema:
+
+1. Generate a new migration
+2. Review the generated SQL in the migrations folder
+3. Push the changes to your database
 
 ## Production
 
