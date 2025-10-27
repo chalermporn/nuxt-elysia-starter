@@ -7,6 +7,30 @@ export default defineNuxtConfig({
   // CSR Configuration
   ssr: false,
 
+  app: {
+    head: {
+      htmlAttrs: {
+        lang: 'th',
+      },
+      title: 'Member Management System - Nuxt Elysia Starter',
+      meta: [
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        {
+          name: 'description',
+          content: 'A modern member management system built with Nuxt 4, Elysia, and TailwindCSS. Features include sorting, pagination, and search functionality.',
+        },
+      ],
+      link: [
+        { rel: 'dns-prefetch', href: 'http://localhost:3000' },
+      ],
+    },
+  },
+
+  experimental: {
+    payloadExtraction: false,
+  },
+
   nitro: {
     preset: 'bun',
   },
@@ -22,6 +46,21 @@ export default defineNuxtConfig({
     ],
     build: {
       sourcemap: false,
+      cssCodeSplit: true,
+      minify: 'terser',
+      terserOptions: {
+        compress: {
+          drop_console: true,
+          drop_debugger: true,
+        },
+      },
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ['vue', 'vue-router'],
+          },
+        },
+      },
     },
   },
   modules: ['@nuxt/eslint', 'nuxt-elysia'],

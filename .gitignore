@@ -31,3 +31,4 @@ logs
 # Test coverage
 coverage
 .nyc_output/
+lighthouse-reports

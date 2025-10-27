@@ -124,7 +124,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container mx-auto p-5">
+  <main class="container mx-auto p-5">
     <h1 class="text-3xl font-bold mb-5">
       รายชื่อสมาชิก
     </h1>
@@ -159,8 +159,9 @@ onMounted(() => {
         แสดง {{ (pagination.page - 1) * pagination.limit + 1 }} - {{ Math.min(pagination.page * pagination.limit, pagination.total) }} จาก {{ pagination.total }} รายการ
       </div>
       <div class="flex items-center gap-2">
-        <label class="text-sm opacity-70">แสดงผลต่อหน้า:</label>
+        <label for="items-per-page" class="text-sm opacity-70">แสดงผลต่อหน้า:</label>
         <select
+          id="items-per-page"
           v-model="itemsPerPage"
           class="select select-bordered select-sm w-20"
           @change="handleItemsPerPageChange"
@@ -351,5 +352,5 @@ onMounted(() => {
     <div class="mt-2 text-center text-sm opacity-70">
       หน้า {{ pagination.page }} จาก {{ pagination.totalPages }}
     </div>
-  </div>
+  </main>
 </template>
