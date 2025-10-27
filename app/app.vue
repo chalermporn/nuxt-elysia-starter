@@ -95,29 +95,29 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto p-5 font-sans">
-    <h1 class="text-gray-800 mb-5 text-3xl font-bold">
+  <div class="container mx-auto p-5">
+    <h1 class="text-3xl font-bold mb-5">
       รายชื่อสมาชิก
     </h1>
 
     <!-- Search Bar -->
-    <div class="mb-5">
+    <div class="flex gap-2 mb-5">
       <input
         v-model="searchQuery"
         type="text"
         placeholder="ค้นหาสมาชิก (ชื่อ, อีเมล, เมือง)..."
-        class="p-2.5 w-80 border border-gray-300 rounded"
+        class="input input-bordered w-full max-w-xs"
         @keyup.enter="handleSearch"
       >
       <button
-        class="py-2.5 px-5 ml-2.5 bg-green-600 text-white border-none rounded cursor-pointer hover:bg-green-700"
+        class="btn btn-success"
         @click="handleSearch"
       >
         ค้นหา
       </button>
       <button
         v-if="searchQuery"
-        class="py-2.5 px-5 ml-2.5 bg-gray-600 text-white border-none rounded cursor-pointer hover:bg-gray-700"
+        class="btn btn-neutral"
         @click="searchQuery = ''; handleSearch()"
       >
         ล้างการค้นหา
@@ -125,65 +125,32 @@ onMounted(() => {
     </div>
 
     <!-- Summary -->
-    <div class="mb-4 text-gray-600">
+    <div class="mb-4 text-sm opacity-70">
       แสดง {{ (pagination.page - 1) * pagination.limit + 1 }} - {{ Math.min(pagination.page * pagination.limit, pagination.total) }} จาก {{ pagination.total }} รายการ
     </div>
 
     <!-- Table -->
-    <div class="overflow-x-auto border border-gray-300 rounded-lg">
-      <table class="w-full border-collapse bg-white">
+    <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+      <table class="table table-zebra table-pin-rows table-pin-cols">
         <thead>
-          <tr class="bg-gray-100">
-            <th class="p-3 text-left border-b-2 border-gray-300">
-              ID
-            </th>
-            <th class="p-3 text-left border-b-2 border-gray-300">
-              ชื่อ
-            </th>
-            <th class="p-3 text-left border-b-2 border-gray-300">
-              นามสกุล
-            </th>
-            <th class="p-3 text-left border-b-2 border-gray-300">
-              อีเมล
-            </th>
-            <th class="p-3 text-left border-b-2 border-gray-300">
-              เบอร์โทร
-            </th>
-            <th class="p-3 text-left border-b-2 border-gray-300">
-              อายุ
-            </th>
-            <th class="p-3 text-left border-b-2 border-gray-300">
-              เมือง
-            </th>
-            <th class="p-3 text-left border-b-2 border-gray-300">
-              สถานะ
-            </th>
-            <th class="p-3 text-left border-b-2 border-gray-300">
-              วันที่สมัคร
-            </th>
+          <tr>
+            <th>ID</th>
+            <td>ชื่อ</td>
+            <td>นามสกุล</td>
+            <td>อีเมล</td>
+            <td>เบอร์โทร</td>
+            <td>อายุ</td>
+            <td>เมือง</td>
+            <td>สถานะ</td>
+            <td>วันที่สมัคร</td>
           </tr>
         </thead>
         <tbody>
           <!-- Skeleton Loading -->
           <template v-if="isLoading">
-            <tr
-              v-for="i in 10"
-              :key="`skeleton-${i}`"
-              class="border-b border-gray-200"
-            >
-              <td
-                v-for="col in 9"
-                :key="`skeleton-${i}-${col}`"
-                class="p-3"
-              >
-                <div
-                  class="skeleton h-5.5 bg-gray-300 rounded"
-                  :class="{
-                    'w-10': col === 1,
-                    'w-50': col === 4,
-                    'w-25': col !== 1 && col !== 4,
-                  }"
-                />
+            <tr v-for="i in 10" :key="`skeleton-${i}`">
+              <td v-for="col in 9" :key="`skeleton-${i}-${col}`">
+                <div class="skeleton h-4 w-20" />
               </td>
             </tr>
           </template>
@@ -193,40 +160,24 @@ onMounted(() => {
             <tr
               v-for="member in members"
               :key="member.id"
-              class="border-b border-gray-200 hover:bg-gray-50"
+              class="hover"
             >
-              <td class="p-3">
-                {{ member.id }}
-              </td>
-              <td class="p-3">
-                {{ member.firstName }}
-              </td>
-              <td class="p-3">
-                {{ member.lastName }}
-              </td>
-              <td class="p-3">
-                {{ member.email }}
-              </td>
-              <td class="p-3">
-                {{ member.phone }}
-              </td>
-              <td class="p-3">
-                {{ member.age }}
-              </td>
-              <td class="p-3">
-                {{ member.city }}
-              </td>
-              <td class="p-3">
+              <th>{{ member.id }}</th>
+              <td>{{ member.firstName }}</td>
+              <td>{{ member.lastName }}</td>
+              <td>{{ member.email }}</td>
+              <td>{{ member.phone }}</td>
+              <td>{{ member.age }}</td>
+              <td>{{ member.city }}</td>
+              <td>
                 <span
-                  class="py-1 px-3 rounded-xl text-xs font-bold text-white"
-                  :class="member.status === 'active' ? 'bg-green-600' : 'bg-red-600'"
+                  class="badge"
+                  :class="member.status === 'active' ? 'badge-success' : 'badge-error'"
                 >
                   {{ member.status === 'active' ? 'ใช้งาน' : 'ไม่ใช้งาน' }}
                 </span>
               </td>
-              <td class="p-3">
-                {{ member.joinDate }}
-              </td>
+              <td>{{ member.joinDate }}</td>
             </tr>
           </template>
         </tbody>
@@ -234,55 +185,36 @@ onMounted(() => {
     </div>
 
     <!-- Pagination -->
-    <div class="mt-5 flex justify-center items-center gap-2.5">
-      <button
-        :disabled="!pagination.hasPrev"
-        class="py-2 px-4 border border-gray-300 rounded bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-        @click="prevPage"
-      >
-        ก่อนหน้า
-      </button>
-
-      <div class="flex gap-1.5">
+    <div class="flex justify-center mt-5">
+      <div class="join">
+        <button
+          class="join-item btn"
+          :disabled="!pagination.hasPrev"
+          @click="prevPage"
+        >
+          «
+        </button>
         <button
           v-for="page in pagination.totalPages"
           :key="page"
-          class="py-2 px-3 border border-gray-300 rounded cursor-pointer transition-colors"
-          :class="currentPage === page ? 'bg-green-600 text-white font-bold' : 'bg-white text-gray-800 hover:bg-gray-50'"
+          class="join-item btn"
+          :class="{ 'btn-active': currentPage === page }"
           @click="goToPage(page)"
         >
           {{ page }}
         </button>
+        <button
+          class="join-item btn"
+          :disabled="!pagination.hasNext"
+          @click="nextPage"
+        >
+          »
+        </button>
       </div>
-
-      <button
-        :disabled="!pagination.hasNext"
-        class="py-2 px-4 border border-gray-300 rounded bg-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-        @click="nextPage"
-      >
-        ถัดไป
-      </button>
     </div>
 
-    <div class="mt-2.5 text-center text-gray-600">
+    <div class="mt-2 text-center text-sm opacity-70">
       หน้า {{ pagination.page }} จาก {{ pagination.totalPages }}
     </div>
   </div>
 </template>
-
-<style scoped>
-@keyframes shimmer {
-  0% {
-    background-position: -1000px 0;
-  }
-  100% {
-    background-position: 1000px 0;
-  }
-}
-
-.skeleton {
-  animation: shimmer 2s infinite linear;
-  background: linear-gradient(to right, #e0e0e0 0%, #f0f0f0 20%, #e0e0e0 40%, #e0e0e0 100%);
-  background-size: 1000px 100%;
-}
-</style>
