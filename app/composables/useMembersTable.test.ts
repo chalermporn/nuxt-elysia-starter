@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { useMembersTable } from './useMembersTable'
 
 describe('useMembersTable Composable', () => {
-  describe('Initialization', () => {
+  describe('initialization', () => {
     it('should initialize with default values', () => {
       const {
         currentPage,
@@ -33,7 +33,7 @@ describe('useMembersTable Composable', () => {
     })
   })
 
-  describe('Sorting', () => {
+  describe('sorting', () => {
     it('should set sort column and order to ascending on first click', () => {
       const { sortBy, sortOrder, currentPage, handleSort } = useMembersTable()
 
@@ -45,7 +45,7 @@ describe('useMembersTable Composable', () => {
     })
 
     it('should toggle sort order when clicking same column', () => {
-      const { sortBy, sortOrder, handleSort } = useMembersTable()
+      const { sortOrder, handleSort } = useMembersTable()
 
       handleSort('firstName')
       expect(sortOrder.value).toBe('asc')
@@ -79,7 +79,7 @@ describe('useMembersTable Composable', () => {
     })
   })
 
-  describe('Search', () => {
+  describe('search', () => {
     it('should reset page to 1 when searching', () => {
       const { currentPage, handleSearch } = useMembersTable()
 
@@ -90,7 +90,7 @@ describe('useMembersTable Composable', () => {
     })
   })
 
-  describe('Items Per Page', () => {
+  describe('items Per Page', () => {
     it('should reset page to 1 when changing items per page', () => {
       const { currentPage, handleItemsPerPageChange } = useMembersTable()
 
@@ -101,7 +101,7 @@ describe('useMembersTable Composable', () => {
     })
   })
 
-  describe('Pagination', () => {
+  describe('pagination', () => {
     it('should navigate to next page when hasNext is true', () => {
       const { currentPage, pagination, nextPage } = useMembersTable()
 
@@ -153,7 +153,7 @@ describe('useMembersTable Composable', () => {
     })
   })
 
-  describe('State Management', () => {
+  describe('state Management', () => {
     it('should allow updating search query', () => {
       const { searchQuery } = useMembersTable()
 
@@ -190,7 +190,7 @@ describe('useMembersTable Composable', () => {
       members.value = mockMembers
 
       expect(members.value).toHaveLength(1)
-      expect(members.value[0].firstName).toBe('John')
+      expect(members.value[0]?.firstName).toBe('John')
     })
 
     it('should allow updating loading state', () => {

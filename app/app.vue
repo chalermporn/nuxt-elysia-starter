@@ -41,6 +41,37 @@ const pagination = ref({
   hasPrev: false,
 })
 
+// Define table columns
+const columns = [
+  { key: 'id' as keyof Member, label: 'ID', width: 'w-16' },
+  { key: 'firstName' as keyof Member, label: 'ชื่อ', width: 'min-w-32' },
+  { key: 'lastName' as keyof Member, label: 'นามสกุล', width: 'min-w-32' },
+  { key: 'email' as keyof Member, label: 'อีเมล', width: 'min-w-48' },
+  { key: 'phone' as keyof Member, label: 'เบอร์โทร', width: 'min-w-32' },
+  { key: 'age' as keyof Member, label: 'อายุ', width: 'w-20' },
+  { key: 'city' as keyof Member, label: 'เมือง', width: 'min-w-32' },
+  {
+    key: 'status' as keyof Member,
+    label: 'สถานะ',
+    width: 'w-24',
+    format: (value: any) => {
+      return h('span', {
+        class: ['badge', value === 'active' ? 'badge-success' : 'badge-error'],
+      }, value === 'active' ? 'ใช้งาน' : 'ไม่ใช้งาน')
+    },
+  },
+  {
+    key: 'joinDate' as keyof Member,
+    label: 'วันที่สมัคร',
+    width: 'min-w-32',
+    format: (value: any) => new Date(value).toLocaleDateString('th-TH', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    }),
+  },
+]
+
 async function fetchMembers() {
   isLoading.value = true
 
@@ -183,142 +214,14 @@ onMounted(() => {
     </div>
 
     <!-- Table -->
-    <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
-      <table class="table table-zebra table-pin-rows table-pin-cols whitespace-nowrap">
-        <thead>
-          <tr>
-            <th class="w-16 cursor-pointer hover:bg-base-200" @click="handleSort('id')">
-              <div class="flex items-center gap-1">
-                ID
-                <span v-if="sortBy === 'id'" class="text-xs">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </th>
-            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('firstName')">
-              <div class="flex items-center gap-1">
-                ชื่อ
-                <span v-if="sortBy === 'firstName'" class="text-xs">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </td>
-            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('lastName')">
-              <div class="flex items-center gap-1">
-                นามสกุล
-                <span v-if="sortBy === 'lastName'" class="text-xs">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </td>
-            <td class="min-w-48 cursor-pointer hover:bg-base-200" @click="handleSort('email')">
-              <div class="flex items-center gap-1">
-                อีเมล
-                <span v-if="sortBy === 'email'" class="text-xs">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </td>
-            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('phone')">
-              <div class="flex items-center gap-1">
-                เบอร์โทร
-                <span v-if="sortBy === 'phone'" class="text-xs">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </td>
-            <td class="w-20 cursor-pointer hover:bg-base-200" @click="handleSort('age')">
-              <div class="flex items-center gap-1">
-                อายุ
-                <span v-if="sortBy === 'age'" class="text-xs">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </td>
-            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('city')">
-              <div class="flex items-center gap-1">
-                เมือง
-                <span v-if="sortBy === 'city'" class="text-xs">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </td>
-            <td class="w-24 cursor-pointer hover:bg-base-200" @click="handleSort('status')">
-              <div class="flex items-center gap-1">
-                สถานะ
-                <span v-if="sortBy === 'status'" class="text-xs">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </td>
-            <td class="min-w-32 cursor-pointer hover:bg-base-200" @click="handleSort('joinDate')">
-              <div class="flex items-center gap-1">
-                วันที่สมัคร
-                <span v-if="sortBy === 'joinDate'" class="text-xs">
-                  {{ sortOrder === 'asc' ? '▲' : '▼' }}
-                </span>
-              </div>
-            </td>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Skeleton Loading -->
-          <template v-if="isLoading">
-            <tr v-for="i in 10" :key="`skeleton-${i}`">
-              <td v-for="col in 9" :key="`skeleton-${i}-${col}`" class="whitespace-nowrap">
-                <div class="skeleton h-4 w-20" />
-              </td>
-            </tr>
-          </template>
-
-          <!-- Actual Data -->
-          <template v-else>
-            <tr
-              v-for="member in members"
-              :key="member.id"
-              class="hover"
-            >
-              <th class="whitespace-nowrap">
-                {{ member.id }}
-              </th>
-              <td class="whitespace-nowrap">
-                {{ member.firstName }}
-              </td>
-              <td class="whitespace-nowrap">
-                {{ member.lastName }}
-              </td>
-              <td class="whitespace-nowrap">
-                {{ member.email }}
-              </td>
-              <td class="whitespace-nowrap">
-                {{ member.phone }}
-              </td>
-              <td class="whitespace-nowrap">
-                {{ member.age }}
-              </td>
-              <td class="whitespace-nowrap">
-                {{ member.city }}
-              </td>
-              <td class="whitespace-nowrap">
-                <span
-                  class="badge"
-                  :class="member.status === 'active' ? 'badge-success' : 'badge-error'"
-                >
-                  {{ member.status === 'active' ? 'ใช้งาน' : 'ไม่ใช้งาน' }}
-                </span>
-              </td>
-              <td class="whitespace-nowrap">
-                {{ new Date(member.joinDate).toLocaleDateString('th-TH', {
-                  day: 'numeric',
-                  month: 'short',
-                  year: 'numeric',
-                }) }}
-              </td>
-            </tr>
-          </template>
-        </tbody>
-      </table>
-    </div>
+    <Table
+      :members="members"
+      :columns="columns"
+      :is-loading="isLoading"
+      :sort-by="sortBy"
+      :sort-order="sortOrder"
+      @sort="handleSort"
+    />
 
     <!-- Pagination -->
     <div class="flex justify-center mt-5">
