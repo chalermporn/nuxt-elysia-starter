@@ -15,6 +15,7 @@ interface Member {
 
 interface Column {
   key: keyof Member
+  pin?: boolean
   label: string
   width?: string
   sortable?: boolean
@@ -47,7 +48,8 @@ function handleSort(column: keyof Member) {
     <table class="table table-zebra table-pin-rows table-pin-cols whitespace-nowrap">
       <thead>
         <tr>
-          <th
+          <component
+            :is="column?.pin ? 'th' : 'td'"
             v-for="column in columns"
             :key="column.key"
             :class="[
@@ -62,16 +64,21 @@ function handleSort(column: keyof Member) {
                 {{ sortOrder === 'asc' ? '▲' : '▼' }}
               </span>
             </div>
-          </th>
+          </component>
         </tr>
       </thead>
       <tbody>
         <!-- Skeleton Loading -->
         <template v-if="isLoading">
           <tr v-for="i in 10" :key="`skeleton-${i}`">
-            <td v-for="column in columns" :key="`skeleton-${i}-${column.key}`" class="whitespace-nowrap">
+            <component
+              :is="column?.pin ? 'th' : 'td'"
+              v-for="column in columns"
+              :key="`skeleton-${i}-${column.key}`"
+              class="whitespace-nowrap"
+            >
               <div class="skeleton h-4 w-20" />
-            </td>
+            </component>
           </tr>
         </template>
 
@@ -83,7 +90,7 @@ function handleSort(column: keyof Member) {
             class="hover"
           >
             <component
-              :is="column.key === 'id' ? 'th' : 'td'"
+              :is="column?.pin ? 'th' : 'td'"
               v-for="column in columns"
               :key="`${member.id}-${column.key}`"
               class="whitespace-nowrap"

@@ -43,7 +43,7 @@ const pagination = ref({
 
 // Define table columns
 const columns = [
-  { key: 'id' as keyof Member, label: 'ID', width: 'w-16' },
+  { key: 'id' as keyof Member, label: 'ID', width: 'w-16', pin: true },
   { key: 'firstName' as keyof Member, label: 'ชื่อ', width: 'min-w-32' },
   { key: 'lastName' as keyof Member, label: 'นามสกุล', width: 'min-w-32' },
   { key: 'email' as keyof Member, label: 'อีเมล', width: 'min-w-48' },
@@ -54,6 +54,7 @@ const columns = [
     key: 'status' as keyof Member,
     label: 'สถานะ',
     width: 'w-24',
+
     format: (value: any) => {
       return h('span', {
         class: ['badge', value === 'active' ? 'badge-success' : 'badge-error'],
@@ -64,6 +65,7 @@ const columns = [
     key: 'joinDate' as keyof Member,
     label: 'วันที่สมัคร',
     width: 'min-w-32',
+    pin: true,
     format: (value: any) => new Date(value).toLocaleDateString('th-TH', {
       day: 'numeric',
       month: 'short',
