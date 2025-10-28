@@ -5,7 +5,7 @@
   "scripts": {
     "build": "nuxt build && bun run postbuild",
     "postbuild": "cp sqlite.db .output/sqlite.db 2>/dev/null || true",
-    "dev": "nuxt dev",
+    "dev": "bun --bun run nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
