@@ -222,6 +222,7 @@ onMounted(() => {
       :is-loading="isLoading"
       :sort-by="sortBy"
       :sort-order="sortOrder"
+      :sticky="false"
       @sort="handleSort"
     />
 

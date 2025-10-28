@@ -28,6 +28,7 @@ interface Props {
   isLoading?: boolean
   sortBy?: keyof Member | ''
   sortOrder?: 'asc' | 'desc'
+  sticky?: boolean
 }
 
 interface Emits {
@@ -44,9 +45,9 @@ function handleSort(column: keyof Member) {
 </script>
 
 <template>
-  <div class="overflow-x-auto rounded-box border border-base-content/5 bg-base-100">
+  <div class=" rounded-box border border-base-content/5 bg-base-100" :class="{ 'overflow-x-auto': !sticky }">
     <table class="table table-zebra table-pin-rows table-pin-cols whitespace-nowrap">
-      <thead>
+      <thead :class="{ 'sticky top-0 z-10 bg-base-100 shadow-md': sticky }">
         <tr>
           <component
             :is="column?.pin ? 'th' : 'td'"
@@ -55,6 +56,7 @@ function handleSort(column: keyof Member) {
             :class="[
               column.width,
               column.sortable !== false ? 'cursor-pointer hover:bg-base-200' : '',
+              sticky ? 'bg-base-100' : '',
             ]"
             @click="column.sortable !== false ? handleSort(column.key) : null"
           >
