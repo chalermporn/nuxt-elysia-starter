@@ -226,36 +226,12 @@ onMounted(() => {
     />
 
     <!-- Pagination -->
-    <div class="flex justify-center mt-5">
-      <div class="join">
-        <button
-          class="join-item btn"
-          :disabled="!pagination.hasPrev"
-          @click="prevPage"
-        >
-          «
-        </button>
-        <button
-          v-for="page in pagination.totalPages"
-          :key="page"
-          class="join-item btn"
-          :class="{ 'btn-active': currentPage === page }"
-          @click="goToPage(page)"
-        >
-          {{ page }}
-        </button>
-        <button
-          class="join-item btn"
-          :disabled="!pagination.hasNext"
-          @click="nextPage"
-        >
-          »
-        </button>
-      </div>
-    </div>
-
-    <div class="mt-2 text-center text-sm opacity-70">
-      หน้า {{ pagination.page }} จาก {{ pagination.totalPages }}
-    </div>
+    <Pagination
+      :pagination="pagination"
+      :current-page="currentPage"
+      @prev="prevPage"
+      @next="nextPage"
+      @go-to-page="goToPage"
+    />
   </main>
 </template>
