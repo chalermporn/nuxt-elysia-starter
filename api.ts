@@ -1,4 +1,4 @@
-import { asc, count, desc, like, or } from 'drizzle-orm'
+import { asc, count, desc, eq, like, or } from 'drizzle-orm'
 import { Elysia, t } from 'elysia'
 import { swagger } from '@elysiajs/swagger'
 import { db } from './server/db'
@@ -41,6 +41,21 @@ const MembersQuerySchema = t.Object({
   sortBy: t.Optional(t.String({ description: 'Field to sort by (default: id)' })),
   sortOrder: t.Optional(t.Union([t.Literal('asc'), t.Literal('desc')], { description: 'Sort order (default: asc)' })),
 })
+
+const CreateMemberSchema = t.Object({
+  firstName: t.String({ minLength: 1, description: 'First name of the member' }),
+  lastName: t.String({ minLength: 1, description: 'Last name of the member' }),
+  email: t.String({ format: 'email', description: 'Email address of the member' }),
+  phone: t.String({ minLength: 1, description: 'Phone number of the member' }),
+  age: t.Integer({ minimum: 1, maximum: 150, description: 'Age of the member' }),
+  city: t.String({ minLength: 1, description: 'City where the member resides' }),
+  status: t.Union([t.Literal('active'), t.Literal('inactive')], {
+    description: 'Status of the member',
+    default: 'active',
+  }),
+})
+
+const UpdateMemberSchema = t.Partial(CreateMemberSchema)
 
 export default () => new Elysia()
   .use(
@@ -139,6 +154,141 @@ Retrieve a paginated list of members with optional filtering and sorting capabil
 - Search members: \`/members?search=john\`
 - Sort by age: \`/members?sortBy=age&sortOrder=desc\`
         `,
+      },
+    },
+  )
+  .post(
+    '/members',
+    async ({ body, set }) => {
+      try {
+        const newMember = await db.insert(members).values({
+          firstName: body.firstName,
+          lastName: body.lastName,
+          email: body.email,
+          phone: body.phone,
+          age: body.age,
+          city: body.city,
+          status: body.status || 'active',
+          joinDate: new Date().toISOString().split('T')[0],
+        }).returning()
+
+        set.status = 201
+        return newMember[0]
+      }
+      catch (error: any) {
+        if (error.message?.includes('UNIQUE constraint failed')) {
+          set.status = 409
+          return { error: 'Email already exists' }
+        }
+        set.status = 500
+        return { error: 'Failed to create member' }
+      }
+    },
+    {
+      body: CreateMemberSchema,
+      response: {
+        201: MemberSchema,
+        409: t.Object({ error: t.String() }),
+        500: t.Object({ error: t.String() }),
+      },
+      detail: {
+        tags: ['Members'],
+        summary: 'Create a new member',
+        description: 'Create a new member with the provided information. Email must be unique.',
+      },
+    },
+  )
+  .patch(
+    '/members/:id',
+    async ({ params, body, set }) => {
+      try {
+        const id = Number.parseInt(params.id)
+
+        if (Number.isNaN(id)) {
+          set.status = 400
+          return { error: 'Invalid member ID' }
+        }
+
+        // Check if member exists
+        const existing = await db.select().from(members).where(eq(members.id, id))
+        if (existing.length === 0) {
+          set.status = 404
+          return { error: 'Member not found' }
+        }
+
+        const updated = await db
+          .update(members)
+          .set(body)
+          .where(eq(members.id, id))
+          .returning()
+
+        return updated[0]
+      }
+      catch (error: any) {
+        if (error.message?.includes('UNIQUE constraint failed')) {
+          set.status = 409
+          return { error: 'Email already exists' }
+        }
+        set.status = 500
+        return { error: 'Failed to update member' }
+      }
+    },
+    {
+      params: t.Object({ id: t.String() }),
+      body: UpdateMemberSchema,
+      response: {
+        200: MemberSchema,
+        400: t.Object({ error: t.String() }),
+        404: t.Object({ error: t.String() }),
+        409: t.Object({ error: t.String() }),
+        500: t.Object({ error: t.String() }),
+      },
+      detail: {
+        tags: ['Members'],
+        summary: 'Update a member',
+        description: 'Update an existing member. Only provided fields will be updated.',
+      },
+    },
+  )
+  .delete(
+    '/members/:id',
+    async ({ params, set }) => {
+      try {
+        const id = Number.parseInt(params.id)
+
+        if (Number.isNaN(id)) {
+          set.status = 400
+          return { error: 'Invalid member ID' }
+        }
+
+        // Check if member exists
+        const existing = await db.select().from(members).where(eq(members.id, id))
+        if (existing.length === 0) {
+          set.status = 404
+          return { error: 'Member not found' }
+        }
+
+        await db.delete(members).where(eq(members.id, id))
+
+        return { success: true, message: 'Member deleted successfully' }
+      }
+      catch (error) {
+        set.status = 500
+        return { error: 'Failed to delete member' }
+      }
+    },
+    {
+      params: t.Object({ id: t.String() }),
+      response: {
+        200: t.Object({ success: t.Boolean(), message: t.String() }),
+        400: t.Object({ error: t.String() }),
+        404: t.Object({ error: t.String() }),
+        500: t.Object({ error: t.String() }),
+      },
+      detail: {
+        tags: ['Members'],
+        summary: 'Delete a member',
+        description: 'Delete a member by ID.',
       },
     },
   )
