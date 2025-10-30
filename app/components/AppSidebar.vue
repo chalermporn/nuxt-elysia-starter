@@ -65,7 +65,7 @@ function isActive(link: string) {
       </div>
 
       <!-- Menu Items -->
-      <ul class="menu p-4 flex-1">
+      <ul class="menu p-4 w-full">
         <li v-for="item in menuItems" :key="item.link">
           <NuxtLink
             :to="item.link"
