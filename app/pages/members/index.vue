@@ -231,7 +231,7 @@ async function handleCreateMember(memberData: Omit<Member, 'id'>) {
   isSubmitting.value = true
 
   try {
-    const { data, error } = await $api.members.post(memberData)
+    const { _, error } = await $api.members.post(memberData)
 
     if (error) {
       const errorData = error as any
@@ -260,15 +260,23 @@ async function handleUpdateMember(memberData: Omit<Member, 'id'>) {
   isSubmitting.value = true
 
   try {
-    const { data, error } = await $api.members({ id: selectedMember.value.id.toString() }).patch(memberData)
+    const { _, error } = await $api.members({ id: selectedMember.value.id.toString() }).post(memberData)
 
     if (error) {
       const errorData = error as any
+      console.error('Update error:', errorData)
+
       if (errorData.value?.error?.includes('Email already exists')) {
         toast.error('อีเมลนี้มีอยู่ในระบบแล้ว')
       }
+      else if (errorData.status === 400) {
+        // Show validation error details
+        const validationError = errorData.value?.message || 'ข้อมูลไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง'
+        toast.error(validationError)
+        console.error('Validation error details:', errorData.value)
+      }
       else {
-        toast.error('ไม่สามารถแก้ไขสมาชิกได้')
+        toast.error('ไม่สามารถแก้ไขสมาชิกได้', errorData.value)
       }
       return
     }
@@ -289,10 +297,21 @@ async function handleDeleteMember() {
   isSubmitting.value = true
 
   try {
-    const { data, error } = await $api.members({ id: selectedMember.value.id.toString() }).delete()
+    const { _, error } = await $api.members({ id: selectedMember.value.id.toString() }).delete()
 
     if (error) {
-      toast.error('ไม่สามารถลบสมาชิกได้')
+      const errorData = error as any
+      console.error('Delete error:', errorData)
+
+      if (errorData.status === 400) {
+        toast.error('ID ของสมาชิกไม่ถูกต้อง')
+      }
+      else if (errorData.status === 404) {
+        toast.error('ไม่พบสมาชิกที่ต้องการลบ')
+      }
+      else {
+        toast.error('ไม่สามารถลบสมาชิกได้')
+      }
       return
     }
 
@@ -478,7 +497,7 @@ onUnmounted(() => {
     >
       <MemberForm
         ref="memberFormRef"
-        @submit="handleCreateMember"
+        @submit="handleCreateMember()"
       />
     </Modal>
 

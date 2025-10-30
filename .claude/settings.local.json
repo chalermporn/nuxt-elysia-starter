@@ -1,7 +1,16 @@
 {
   "permissions": {
     "allow": [
-      "Bash(bun run dev)"
+      "Bash(bun run dev)",
+      "Bash(awk:*)",
+      "Bash(xargs kill:*)",
+      "Bash(lsof:*)",
+      "Bash(bun run build:*)",
+      "Bash(bun run preview)",
+      "Bash(curl:*)",
+      "Bash(bun run:*)",
+      "Bash(bun --version:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

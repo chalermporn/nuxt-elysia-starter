@@ -1,6 +1,6 @@
-import { asc, count, desc, eq, like, or } from 'drizzle-orm'
-import { Elysia, t } from 'elysia'
 import { swagger } from '@elysiajs/swagger'
+import { and, asc, count, desc, eq, like, ne, or } from 'drizzle-orm'
+import { Elysia, t } from 'elysia'
 import { db } from './server/db'
 import { members } from './server/db/schema'
 
@@ -198,37 +198,69 @@ Retrieve a paginated list of members with optional filtering and sorting capabil
       },
     },
   )
-  .patch(
+  .post(
     '/members/:id',
     async ({ params, body, set }) => {
       try {
-        const id = Number.parseInt(params.id)
-
+        const id = Number.parseInt(params.id, 10)
         if (Number.isNaN(id)) {
           set.status = 400
           return { error: 'Invalid member ID' }
         }
 
-        // Check if member exists
+        // ตรวจว่ามีสมาชิกอยู่จริงไหม
         const existing = await db.select().from(members).where(eq(members.id, id))
         if (existing.length === 0) {
           set.status = 404
           return { error: 'Member not found' }
         }
 
+        // กันอีเมลซ้ำ (ถ้ามีส่งอีเมลใหม่มา)
+        if (body.email && body.email !== existing[0].email) {
+          const dup = await db
+            .select({ id: members.id })
+            .from(members)
+            .where(and(eq(members.email, body.email), ne(members.id, id)))
+
+          if (dup.length > 0) {
+            set.status = 409
+            return { error: 'Email already exists' }
+          }
+        }
+
+        // อนุญาตเฉพาะฟิลด์ที่แก้ไขได้
+        const allowed = ['firstName', 'lastName', 'email', 'phone', 'age', 'city', 'status']
+        const data: Record<string, any> = {}
+        for (const key of allowed) {
+          if (body[key] !== undefined)
+            data[key] = body[key]
+        }
+
+        if (Object.keys(data).length === 0) {
+          set.status = 400
+          return { error: 'No valid fields to update' }
+        }
+
         const updated = await db
           .update(members)
-          .set(body)
+          .set(data)
           .where(eq(members.id, id))
           .returning()
 
+        if (!updated[0]) {
+          set.status = 500
+          return { error: 'Failed to update member' }
+        }
+
+        set.status = 200
         return updated[0]
       }
       catch (error: any) {
-        if (error.message?.includes('UNIQUE constraint failed')) {
+        if (error?.message?.includes('UNIQUE constraint failed')) {
           set.status = 409
           return { error: 'Email already exists' }
         }
+        console.error(error)
         set.status = 500
         return { error: 'Failed to update member' }
       }
@@ -245,8 +277,8 @@ Retrieve a paginated list of members with optional filtering and sorting capabil
       },
       detail: {
         tags: ['Members'],
-        summary: 'Update a member',
-        description: 'Update an existing member. Only provided fields will be updated.',
+        summary: 'Update a member (POST)',
+        description: 'Update existing member data via POST /members/:id',
       },
     },
   )
